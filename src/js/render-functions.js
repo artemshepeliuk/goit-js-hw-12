@@ -20,6 +20,7 @@ export const hideLoader = () => {
   loader.classList.add('hidden');
 };
 
+
 export const clearGallery = () => {
   gallery.innerHTML = '';
 };
