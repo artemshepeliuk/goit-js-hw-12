@@ -13,10 +13,22 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 export const showLoader = () => {
+  if (!loader.querySelector('.loading-message')) {
+    const message = document.createElement('span');
+    message.classList.add('loading-message');
+    message.textContent = 'Loading images, please wait...';
+    loader.appendChild(message);
+  }
+
   loader.classList.remove('hidden');
 };
 
 export const hideLoader = () => {
+  const message = loader.querySelector('.loading-message');
+  if (message) {
+    loader.removeChild(message);
+  }
+  
   loader.classList.add('hidden');
 };
 
