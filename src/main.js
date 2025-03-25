@@ -28,7 +28,9 @@ form.addEventListener('submit', async (event) => {
   currentPage = 1;
   showLoader();
   clearGallery();
-  
+
+  showEndMessage(false);
+
   try {
     const { hits, totalHits } = await fetchImages(query, currentPage);
     
@@ -36,8 +38,12 @@ form.addEventListener('submit', async (event) => {
       showNoImagesFoundMessage();
     } else {
       renderImages(hits);
-      if (hits.length < 15 || hits.length >= totalHits) {
-        showEndMessage();
+
+
+      if (hits.length >= totalHits) {
+        showEndMessage(true);
+      } else {
+        loadMoreButton.classList.remove('hidden');
       }
     }
   } catch (error) {
@@ -61,8 +67,8 @@ loadMoreButton.addEventListener('click', async () => {
       renderImages(hits);
       scrollToNewImages();
 
-      if (hits.length < 15 || hits.length >= totalHits) {
-        showEndMessage();
+      if (hits.length + (currentPage - 1) * 15 >= totalHits) {
+        showEndMessage(true);
       }
     }
   } catch (error) {
@@ -74,5 +80,3 @@ loadMoreButton.addEventListener('click', async () => {
     hideLoader();
   }
 });
-
-

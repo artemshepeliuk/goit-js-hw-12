@@ -1,5 +1,6 @@
 import SimpleLightbox from 'simplelightbox';
 import "simplelightbox/dist/simple-lightbox.min.css";
+import iziToast from 'izitoast';
 
 const gallery = document.querySelector('.gallery');
 const loader = document.querySelector('.loader');
@@ -13,25 +14,12 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 export const showLoader = () => {
-  if (!loader.querySelector('.loading-message')) {
-    const message = document.createElement('span');
-    message.classList.add('loading-message');
-    message.textContent = 'Loading images, please wait...';
-    loader.appendChild(message);
-  }
-
   loader.classList.remove('hidden');
 };
 
 export const hideLoader = () => {
-  const message = loader.querySelector('.loading-message');
-  if (message) {
-    loader.removeChild(message);
-  }
-  
   loader.classList.add('hidden');
 };
-
 
 export const clearGallery = () => {
   gallery.innerHTML = '';
@@ -40,8 +28,8 @@ export const clearGallery = () => {
 export const renderImages = (images) => {
   const markup = images
     .map(
-      (image) => `
-        <li class="gallery-item">
+      (image) => 
+        `<li class="gallery-item">
           <a href="${image.largeImageURL}">
             <img class="gallery-img" src="${image.webformatURL}" alt="${image.tags}" />
           </a>
@@ -62,9 +50,19 @@ export const renderImages = (images) => {
   loadMoreButton.classList.remove('hidden');
 };
 
-export const showEndMessage = () => {
-  loadMoreButton.classList.add('hidden');
-  endMessage.classList.remove('hidden');
+export const showEndMessage = (show = false) => {
+  if (show) {
+    loadMoreButton.classList.add('hidden');
+
+    iziToast.info({
+      message: "We're sorry, but you've reached the end of search results.",
+      position: 'topRight',
+    });
+
+  } else {
+    loadMoreButton.classList.remove('hidden');
+    endMessage.classList.add('hidden');
+  }
 };
 
 export const showNoImagesFoundMessage = () => {
@@ -72,11 +70,13 @@ export const showNoImagesFoundMessage = () => {
     title: 'Sorry, no images found',
     message: 'Please try again with a different search term.',
   });
+
+  loadMoreButton.classList.add('hidden');
 };
 
 export const scrollToNewImages = () => {
   const galleryItemHeight = gallery.querySelector('.gallery-item').getBoundingClientRect().height;
- window.scrollBy({
+  window.scrollBy({
     top: galleryItemHeight * 2,
     behavior: 'smooth',
   });
